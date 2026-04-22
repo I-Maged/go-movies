@@ -6,6 +6,7 @@ import App from './App.jsx'
 import ErrorPage from './components/ErrorPage.jsx'
 import Home from '../src/components/Home.jsx'
 import Movies from '../src/components/Movies.jsx'
+import Movie from '../src/components/Movie.jsx'
 import EditMovie from '../src/components/EditMovie.jsx'
 import Genres from './components/Genres.jsx'
 import Graphql from './components/Graphql.jsx'
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: '/movies', element: <Movies /> },
+      { path: '/movies/:id', element: <Movie /> },
       { path: '/genres', element: <Genres /> },
       { path: '/admin/movie/0', element: <EditMovie /> },
       { path: '/manage-catalouge', element: <ManageCatalouge /> },
