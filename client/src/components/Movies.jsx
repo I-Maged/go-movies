@@ -5,36 +5,20 @@ const Movies = () => {
   const [movies, setMovies] = useState([])
 
   useEffect(() => {
-    let moviesList = [
-      {
-        id: 1,
-        title: 'Highlander',
-        release_date: '1986-5-10',
-        runtime: 116,
-        mpaa_rating: 'R',
-        description: 'Some lengthy description',
-      },
-      {
-        id: 2,
-        title: 'American History X',
-        release_date: '1986-5-10',
-        runtime: 116,
-        mpaa_rating: 'PG-13',
-        description: 'Some lengthy description',
-      },
-      {
-        id: 3,
-        title: 'Men in black',
-        release_date: '1986-5-10',
-        runtime: 116,
-        mpaa_rating: 'ff',
-        description: 'Some lengthy description',
-      },
-    ]
-
     function getMovies() {
-      setMovies(moviesList)
+      const headers = new Headers()
+      headers.append('Content-Type', 'application/json')
+
+      const requestOptions = { method: 'GET', headers: headers }
+
+      fetch(`/api/movies`, requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          setMovies(data)
+        })
+        .catch((err) => console.log(err))
     }
+
     getMovies()
   }, [])
 
