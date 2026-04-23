@@ -22,7 +22,8 @@ func main() {
 
 	// start a web server
 	log.Println("Starting server on port: ", port)
-	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+
+	err := http.ListenAndServe(fmt.Sprintf(":%d", port), app.routes())
 	if err != nil {
 		log.Fatal(err)
 	}
