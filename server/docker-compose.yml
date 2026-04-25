@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:18.3
+    restart: always
+    container_name: my_postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: moviesDB
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./postgres_data:/var/lib/postgresql
+      - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
