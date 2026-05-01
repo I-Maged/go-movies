@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS movies (
     runtime integer,
     rating integer,
     mpaa_rating character varying,
+    image text,
     created_at timestamp without time zone,
     updated_at timestamp without time zone
 );
@@ -35,13 +36,13 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 -- -------------------------------------
-INSERT INTO movies VALUES (1, 'The Shawshank Redemption', 'Two imprisoned men bond over a number of years', 1994, '1994-10-14', 145, 5, 'R', '2021-05-17 00:00:00',	'2021-05-17 00:00:00');
+INSERT INTO movies VALUES (1, 'The Shawshank Redemption', 'Two imprisoned men bond over a number of years', 1994, '1994-10-14', 145, 5, 'PG', 'https://m.media-amazon.com/images/I/410oZCX8w2L._SY300_SX300_QL70_FMwebp_.jpg', '1993-05-17 00:00:00',	'1999-05-17 00:00:00');
 
-INSERT INTO movies VALUES (2, 'The Godfather', 'The aging patriarch of an organized crime dynasty transfers control to his son', 1972, '1972-03-24', 175, 5, 'R', '2021-05-17 00:00:00', '2021-05-17 00:00:00');
+INSERT INTO movies VALUES (2, 'The Godfather', 'The aging patriarch of an organized crime dynasty transfers control to his son', 1972, '1972-03-24', 175, 5, 'PG-13', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSel__j-uYHI7K0j9kFFq4rMpZ3kfdW1RAGag&s', '1972-05-17 00:00:00', '2024-05-17 00:00:00');
 
-INSERT INTO movies VALUES (3, 'The Dark Knight', 'The menace known as the Joker wreaks havoc on Gotham City', 2008,	'2008-07-18', 152, 5, 'PG13', '2021-05-17 00:00:00', '2021-05-17 00:00:00');
+INSERT INTO movies VALUES (3, 'The Dark Knight', 'The menace known as the Joker wreaks havoc on Gotham City', 2008,	'2008-07-18', 152, 5, 'PG-13', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHOKLDNCPgtNT_GgusKjCqXfYKaNeIxAD7MQ&s', '2008-05-17 00:00:00', '2026-05-17 00:00:00');
 
-INSERT INTO movies VALUES (4, 'American Psycho', 'A wealthy New York investment banking executive hides his alternate psychopathic ego', 2000, '2000-04-14', 102, 4, 'R', '2021-05-17 00:00:00', '2021-05-17 00:00:00');
+INSERT INTO movies VALUES (4, 'American Psycho', 'A wealthy New York investment banking executive hides his alternate psychopathic ego', 2000, '2000-04-14', 102, 4, 'R', '', '2000-05-17 00:00:00', '2021-05-17 00:00:00');
 
 -- -----------------------------------------------
 
@@ -70,4 +71,4 @@ INSERT INTO movies_genres VALUES(10, 2, 6, '2021-05-17 00:00:00', '2021-05-17 00
 
 -------------------------------------
 
-INSERT INTO users VALUES(1, 'Admin', 'user', '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8', '2026-04-25 00:00:00');
+INSERT INTO users VALUES(1, 'Admin', 'user', 'postgres', '2026-04-25 00:00:00');
