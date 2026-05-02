@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS users (
     last_name character varying,
     email TEXT UNIQUE,
     password character varying,
-    created_at timestamp without time zone
+    created_at timestamp without time zone,
     updated_at timestamp without time zone
 );
 

@@ -15,15 +15,33 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    if (email === 'admin@example.com') {
-      setJwtToken('abc')
-      setAlertClassname('d-none')
-      setAlertMessage('')
-      navigate('/')
-    } else {
-      setAlertClassname('alert-danger')
-      setAlertMessage('Invalid Credentials')
+    let payload = { email, password }
+
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(payload),
     }
+
+    fetch('/api/authenticate', requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          setAlertClassname('alert-danger')
+          setAlertMessage(data.message)
+        } else {
+          console.log(data)
+          setJwtToken(data.access_token)
+          setAlertClassname('d-none')
+          setAlertMessage('')
+          navigate('/')
+        }
+      })
+      .catch((error) => {
+        setAlertClassname('alert-danger')
+        setAlertMessage(error)
+      })
   }
 
   return (
