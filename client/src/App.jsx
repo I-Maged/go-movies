@@ -13,6 +13,31 @@ const App = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
+    const requestOptions = { method: 'GET', credentials: 'include' }
+
+    fetch('/api/refresh', requestOptions)
+      .then(async (response) => {
+        if (!response.ok) {
+          const text = await response.text()
+          throw new Error(
+            `HTTP ${response.status}: ${text || response.statusText}`,
+          )
+        }
+        // handle empty body (204) safely
+        const text = await response.text()
+        const data = text ? JSON.parse(text) : {}
+        return data
+      })
+      .then((data) => {
+        console.log(data)
+        if (data.access_token) {
+          setCookie('access_token', data.access_token, { path: '/' })
+        }
+      })
+      .catch((err) => {
+        console.error('Refresh failed', err)
+      })
+
     const getCurrentUser = () => {
       const currentUser = localStorage.getItem('jwt')
       if (currentUser != null) {
@@ -21,7 +46,7 @@ const App = () => {
     }
 
     getCurrentUser()
-  }, [setJwtToken])
+  }, [setJwtToken, cookies.access_token, setCookie])
 
   const logout = () => {
     setJwtToken('')

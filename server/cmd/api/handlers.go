@@ -107,11 +107,11 @@ func (app *application) authenticate(w http.ResponseWriter, r *http.Request) {
 func (app *application) refreshTokens(w http.ResponseWriter, r *http.Request) {
 	for _, cookie := range r.Cookies() {
 		if cookie.Name == app.auth.CookieName {
-			calims := &Claims{}
+			claims := &Claims{}
 			refreshToken := cookie.Value
 
 			// Parse the token to get the claims
-			_, err := jwt.ParseWithClaims(refreshToken, calims, func(token *jwt.Token) (interface{}, error) {
+			_, err := jwt.ParseWithClaims(refreshToken, claims, func(token *jwt.Token) (interface{}, error) {
 				return []byte(app.JWTSecret), nil
 			})
 			if err != nil {
@@ -120,7 +120,7 @@ func (app *application) refreshTokens(w http.ResponseWriter, r *http.Request) {
 			}
 
 			// Get the user id from the token claims
-			userID, err := strconv.Atoi(calims.Subject)
+			userID, err := strconv.Atoi(claims.Subject)
 			if err != nil {
 				app.errorJSON(w, errors.New("Unknown User"), http.StatusUnauthorized)
 				return

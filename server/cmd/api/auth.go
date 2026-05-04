@@ -93,7 +93,7 @@ func (j *Auth) getRefreshCookie(refreshToken string) *http.Cookie {
 		SameSite: http.SameSiteStrictMode,
 		Domain:   j.CookieDomain,
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   false,
 	}
 }
 
