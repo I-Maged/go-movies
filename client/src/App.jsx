@@ -5,7 +5,7 @@ import { useCookies } from 'react-cookie'
 
 const App = () => {
   const [jwtToken, setJwtToken] = useState('')
-  const [cookies, setCookie] = useCookies(['access_token'])
+  const [cookies, setCookie, removeCookie] = useCookies(['access_token'])
 
   const [alertMessage, setAlertMessage] = useState('')
   const [alertClassname, setAlertClassname] = useState('d-none')
@@ -23,13 +23,12 @@ const App = () => {
             `HTTP ${response.status}: ${text || response.statusText}`,
           )
         }
-        // handle empty body (204) safely
+
         const text = await response.text()
         const data = text ? JSON.parse(text) : {}
         return data
       })
       .then((data) => {
-        console.log(data)
         if (data.access_token) {
           setCookie('access_token', data.access_token, { path: '/' })
         }
@@ -49,6 +48,18 @@ const App = () => {
   }, [setJwtToken, cookies.access_token, setCookie])
 
   const logout = () => {
+    const requestOptions = { method: 'GET', credentials: 'include' }
+
+    fetch(`/api/logout`, requestOptions)
+      .catch((err) => {
+        console.log('error logging out', err)
+      })
+      .finally(() => {
+        removeCookie('access_token', { path: '/' })
+      })
+
+    console.log(cookies)
+
     setJwtToken('')
     localStorage.removeItem('jwt')
     navigate('/login')

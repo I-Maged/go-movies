@@ -36,7 +36,6 @@ const Login = () => {
           setAlertClassname('d-none')
           setAlertMessage('')
 
-          console.log(data)
           localStorage.setItem('jwt', data.access_token)
           setCookie('access_token', data.access_token, { path: '/' })
           setCookie('refresh_token', data.refresh_token, { path: '/' })
