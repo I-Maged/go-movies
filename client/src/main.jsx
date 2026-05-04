@@ -12,6 +12,7 @@ import Genres from './components/Genres.jsx'
 import Graphql from './components/Graphql.jsx'
 import Login from './components/Login.jsx'
 import ManageCatalouge from './components/ManageCatalouge.jsx'
+import { CookiesProvider } from 'react-cookie'
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <CookiesProvider>
+      <RouterProvider router={router} />
+    </CookiesProvider>
   </StrictMode>,
 )

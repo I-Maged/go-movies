@@ -8,7 +8,8 @@ const Login = () => {
   const emailRef = useRef()
   const passwordRef = useRef()
 
-  const { setJwtToken, setAlertClassname, setAlertMessage } = useOutletContext()
+  const { setCookie, setJwtToken, setAlertClassname, setAlertMessage } =
+    useOutletContext()
 
   const navigate = useNavigate()
 
@@ -31,10 +32,13 @@ const Login = () => {
           setAlertClassname('alert-danger')
           setAlertMessage(data.message)
         } else {
-          console.log(data)
           setJwtToken(data.access_token)
           setAlertClassname('d-none')
           setAlertMessage('')
+
+          localStorage.setItem('jwt', data.access_token)
+          setCookie('access_token', data.access_token, { path: '/' })
+
           navigate('/')
         }
       })

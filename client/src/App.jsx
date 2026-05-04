@@ -1,16 +1,31 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, Outlet, useNavigate } from 'react-router-dom'
 import Alert from './components/Alert'
+import { useCookies } from 'react-cookie'
 
 const App = () => {
   const [jwtToken, setJwtToken] = useState('')
+  const [cookies, setCookie] = useCookies(['access_token'])
+
   const [alertMessage, setAlertMessage] = useState('')
   const [alertClassname, setAlertClassname] = useState('d-none')
 
   const navigate = useNavigate()
 
+  useEffect(() => {
+    const getCurrentUser = () => {
+      const currentUser = localStorage.getItem('jwt')
+      if (currentUser != null) {
+        setJwtToken(currentUser)
+      }
+    }
+
+    getCurrentUser()
+  }, [setJwtToken])
+
   const logout = () => {
     setJwtToken('')
+    localStorage.removeItem('jwt')
     navigate('/login')
   }
 
@@ -86,6 +101,8 @@ const App = () => {
           <Alert message={alertMessage} className={alertClassname} />
           <Outlet
             context={{
+              cookies,
+              setCookie,
               jwtToken,
               setJwtToken,
               setAlertClassname,
