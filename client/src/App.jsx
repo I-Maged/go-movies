@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, Outlet, useNavigate } from 'react-router-dom'
 import Alert from './components/Alert'
 import { useCookies } from 'react-cookie'
@@ -10,11 +10,65 @@ const App = () => {
   const [alertMessage, setAlertMessage] = useState('')
   const [alertClassname, setAlertClassname] = useState('d-none')
 
+  const [tickInterval, setTickInterval] = useState()
+
   const navigate = useNavigate()
+
+  const toggleRefresh = useCallback(
+    (status) => {
+      const requestOptions = { method: 'GET', credentials: 'include' }
+      if (status) {
+        let i = setInterval(() => {
+          console.log('ticking')
+          fetch('/api/refresh', requestOptions)
+            .then(async (response) => {
+              if (!response.ok) {
+                const text = await response.text()
+                throw new Error(
+                  `HTTP ${response.status}: ${text || response.statusText}`,
+                )
+              }
+
+              const text = await response.text()
+              const data = text ? JSON.parse(text) : {}
+              return data
+            })
+            .then((data) => {
+              if (data.access_token) {
+                setCookie('access_token', data.access_token, { path: '/' })
+              }
+            })
+            .catch((err) => {
+              console.error('Refresh failed', err)
+            })
+        }, 600000)
+        setTickInterval(i)
+      } else {
+        setTickInterval(null)
+        clearInterval(tickInterval)
+      }
+    },
+    [setCookie, tickInterval],
+  )
+
+  const logout = () => {
+    const requestOptions = { method: 'GET', credentials: 'include' }
+    fetch(`/api/logout`, requestOptions)
+      .catch((err) => {
+        console.log('error logging out', err)
+      })
+      .finally(() => {
+        removeCookie('access_token', { path: '/' })
+        toggleRefresh(false)
+      })
+
+    setJwtToken('')
+    localStorage.removeItem('jwt')
+    navigate('/login')
+  }
 
   useEffect(() => {
     const requestOptions = { method: 'GET', credentials: 'include' }
-
     fetch('/api/refresh', requestOptions)
       .then(async (response) => {
         if (!response.ok) {
@@ -31,6 +85,7 @@ const App = () => {
       .then((data) => {
         if (data.access_token) {
           setCookie('access_token', data.access_token, { path: '/' })
+          toggleRefresh(true)
         }
       })
       .catch((err) => {
@@ -45,25 +100,7 @@ const App = () => {
     }
 
     getCurrentUser()
-  }, [setJwtToken, cookies.access_token, setCookie])
-
-  const logout = () => {
-    const requestOptions = { method: 'GET', credentials: 'include' }
-
-    fetch(`/api/logout`, requestOptions)
-      .catch((err) => {
-        console.log('error logging out', err)
-      })
-      .finally(() => {
-        removeCookie('access_token', { path: '/' })
-      })
-
-    console.log(cookies)
-
-    setJwtToken('')
-    localStorage.removeItem('jwt')
-    navigate('/login')
-  }
+  }, [setCookie, toggleRefresh])
 
   return (
     <div className='container'>
@@ -143,6 +180,7 @@ const App = () => {
               setJwtToken,
               setAlertClassname,
               setAlertMessage,
+              toggleRefresh,
             }}
           />
         </div>

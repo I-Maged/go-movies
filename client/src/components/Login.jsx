@@ -8,8 +8,13 @@ const Login = () => {
   const emailRef = useRef()
   const passwordRef = useRef()
 
-  const { setCookie, setJwtToken, setAlertClassname, setAlertMessage } =
-    useOutletContext()
+  const {
+    toggleRefresh,
+    setCookie,
+    setJwtToken,
+    setAlertClassname,
+    setAlertMessage,
+  } = useOutletContext()
 
   const navigate = useNavigate()
 
@@ -39,6 +44,7 @@ const Login = () => {
           localStorage.setItem('jwt', data.access_token)
           setCookie('access_token', data.access_token, { path: '/' })
           setCookie('refresh_token', data.refresh_token, { path: '/' })
+          toggleRefresh(true)
 
           navigate('/')
         }
