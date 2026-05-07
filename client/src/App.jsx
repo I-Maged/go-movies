@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, Outlet, useNavigate } from 'react-router-dom'
 import Alert from './components/Alert'
 import { useCookies } from 'react-cookie'
@@ -10,11 +10,11 @@ const App = () => {
   const [alertMessage, setAlertMessage] = useState('')
   const [alertClassname, setAlertClassname] = useState('d-none')
 
-  const [tickInterval, setTickInterval] = useState()
+  // const [tickInterval, setTickInterval] = useState()
 
   const navigate = useNavigate()
 
-  const toggleRefresh = useCallback(
+  /*   const toggleRefresh = useCallback(
     (status) => {
       const requestOptions = { method: 'GET', credentials: 'include' }
       if (status) {
@@ -50,7 +50,7 @@ const App = () => {
     },
     [setCookie, tickInterval],
   )
-
+ */
   const logout = () => {
     const requestOptions = { method: 'GET', credentials: 'include' }
     fetch(`/api/logout`, requestOptions)
@@ -59,7 +59,7 @@ const App = () => {
       })
       .finally(() => {
         removeCookie('access_token', { path: '/' })
-        toggleRefresh(false)
+        // toggleRefresh(false)
       })
 
     setJwtToken('')
@@ -85,7 +85,7 @@ const App = () => {
       .then((data) => {
         if (data.access_token) {
           setCookie('access_token', data.access_token, { path: '/' })
-          toggleRefresh(true)
+          // toggleRefresh(true)
         }
       })
       .catch((err) => {
@@ -100,7 +100,7 @@ const App = () => {
     }
 
     getCurrentUser()
-  }, [setCookie, toggleRefresh])
+  }, [setCookie])
 
   return (
     <div className='container'>
@@ -180,7 +180,7 @@ const App = () => {
               setJwtToken,
               setAlertClassname,
               setAlertMessage,
-              toggleRefresh,
+              // toggleRefresh,
             }}
           />
         </div>

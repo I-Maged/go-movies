@@ -9,7 +9,7 @@ const Login = () => {
   const passwordRef = useRef()
 
   const {
-    toggleRefresh,
+    // toggleRefresh,
     setCookie,
     setJwtToken,
     setAlertClassname,
@@ -44,7 +44,7 @@ const Login = () => {
           localStorage.setItem('jwt', data.access_token)
           setCookie('access_token', data.access_token, { path: '/' })
           setCookie('refresh_token', data.refresh_token, { path: '/' })
-          toggleRefresh(true)
+          // toggleRefresh(true)
 
           navigate('/')
         }
