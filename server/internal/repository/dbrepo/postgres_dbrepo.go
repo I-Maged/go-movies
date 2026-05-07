@@ -135,7 +135,7 @@ func (m *PostgresDBRepo) OneMovie(id int) (*models.Movie, error) {
 	return &movie, nil
 }
 
-func (m *PostgresDBRepo) OneMovieForEdit(id int) (*models.Movie, []*models.Genre, error) {
+func (m *PostgresDBRepo) MovieForEdit(id int) (*models.Movie, []*models.Genre, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
@@ -202,7 +202,7 @@ func (m *PostgresDBRepo) OneMovieForEdit(id int) (*models.Movie, []*models.Genre
 
 	query = `
 		Select
-			id, genre_name,
+			id, genre_name
 		from genres
 		order by genre_name
 	`
