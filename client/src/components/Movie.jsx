@@ -6,17 +6,27 @@ const Movie = () => {
   const [movie, setMovie] = useState({})
 
   useEffect(() => {
-    let myMovie = {
-      id: 1,
-      title: 'Highlander',
-      release_date: '1986-5-10',
-      runtime: 116,
-      mpaa_rating: 'R',
-      description: 'Some lengthy description',
-    }
     function getMovie() {
-      setMovie(myMovie)
+      const headers = new Headers()
+      headers.append('Content-Type', 'application/json')
+
+      const requestOptions = { method: 'GET', headers: headers }
+
+      fetch(`/api/movies/${id}`, requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data)
+          if (data.genres) {
+            data.genres = Object.values(data.genres)
+          } else {
+            data.genres = []
+          }
+          console.log(data)
+          setMovie(data)
+        })
+        .catch((err) => console.log(err))
     }
+
     getMovie()
   }, [id])
 
@@ -29,7 +39,20 @@ const Movie = () => {
           {movie.mpaa_rating}
         </em>
       </small>
+      <div>
+        {movie.genres &&
+          movie.genres.map((genre) => (
+            <span key={genre.id} className='badge bg-secondary me-2'>
+              {genre.genre_name}
+            </span>
+          ))}
+      </div>
       <hr />
+      {movie.image !== '' && (
+        <div className='mb-3'>
+          <img src={movie.image} alt={movie.title} />
+        </div>
+      )}
       <p>{movie.description}</p>
     </div>
   )

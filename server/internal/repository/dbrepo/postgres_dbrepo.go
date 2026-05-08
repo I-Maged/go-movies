@@ -230,6 +230,42 @@ func (m *PostgresDBRepo) MovieForEdit(id int) (*models.Movie, []*models.Genre, e
 	return &movie, allGenres, nil
 }
 
+func (m *PostgresDBRepo) AllGenres() ([]*models.Genre, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
+
+	query := `
+		Select
+			id, genre_name, created_at, updated_at
+		from genres
+		order by genre_name
+	`
+	rows, err := m.DB.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var allGenres []*models.Genre
+
+	for rows.Next() {
+		var g models.Genre
+		err := rows.Scan(
+			&g.ID,
+			&g.GenreName,
+			&g.CreatedAt,
+			&g.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		allGenres = append(allGenres, &g)
+	}
+
+	return allGenres, nil
+}
+
 func (m *PostgresDBRepo) GetUserByEmail(email string) (*models.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
