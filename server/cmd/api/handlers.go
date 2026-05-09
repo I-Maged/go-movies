@@ -241,7 +241,19 @@ func (app *application) InsertMovie(w http.ResponseWriter, r *http.Request) {
 	movie.CreatedAt = time.Now()
 	movie.UpdatedAt = time.Now()
 
+	// Insert movie
+	newID, err := app.DB.InsertMovie(movie)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
 	// Handle genres
+	err = app.DB.UpdateMovieGenres(newID, movie.GenresArray)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
 
 	res := JSONResponse{
 		Error:   false,
