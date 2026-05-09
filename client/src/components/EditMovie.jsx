@@ -144,7 +144,6 @@ const EditMovie = () => {
         icon: 'error',
         confirmButtonText: 'OK!',
       })
-      // alert('You must choose at least one genre')
       errors.push('genres')
     }
 
