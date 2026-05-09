@@ -3,18 +3,8 @@ import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import Input from './form/Input'
 import Select from './form/Select'
 import TextArea from './form/TextArea'
+import Checkbox from './form/Checkbox'
 
-/* const genreOptions = [
-  { id: 'Drama', value: 'Drama' },
-  { id: 'Crime', value: 'Crime' },
-  { id: 'Action', value: 'Action' },
-  { id: 'Comic Book', value: 'Comic Book' },
-  { id: 'Sci-Fi', value: 'Sci-Fi' },
-  { id: 'Mystery', value: 'Mystery' },
-  { id: 'Adventure', value: 'Adventure' },
-  { id: 'Comedy', value: 'Comedy' },
-  { id: 'Romance', value: 'Romance' },
-] */
 const mpaaOptions = [
   { id: 'G', value: 'G' },
   { id: 'PG', value: 'PG' },
@@ -26,8 +16,11 @@ const mpaaOptions = [
 
 const EditMovie = () => {
   const { jwtToken } = useOutletContext()
-  const { id } = useParams()
   const navigate = useNavigate()
+  let { id } = useParams()
+  if (id === undefined) {
+    id = 0
+  }
 
   // const[error,setError]=useState(null)
   const [errors, setErrors] = useState([])
@@ -38,6 +31,9 @@ const EditMovie = () => {
     runtime: '',
     mpaa_rating: '',
     description: '',
+    genres: [],
+    genres_array: [],
+    // genres_array: [Array(9).fill(false)],
   })
 
   useEffect(() => {
@@ -45,7 +41,46 @@ const EditMovie = () => {
       navigate('/login')
       return
     }
-  }, [jwtToken, navigate])
+
+    if (id === 0) {
+      // Adding a new movie
+      function getGenres() {
+        setMovie({
+          id: 0,
+          title: '',
+          release_date: '',
+          runtime: '',
+          mpaa_rating: '',
+          description: '',
+          genres: [],
+          genres_array: [],
+          // genres_array: [Array(9).fill(false)],
+        })
+
+        const headers = new Headers()
+        headers.append('Content-Type', 'application/json')
+
+        const requestOptions = { method: 'GET', headers: headers }
+
+        fetch(`/api/genres`, requestOptions)
+          .then((response) => response.json())
+          .then((data) => {
+            const genresWithChecked = data.map((g) => ({
+              ...g,
+              checked: false,
+            }))
+
+            // Use the functional setter here to avoid stale closures
+            setMovie((prev) => ({ ...prev, genres: genresWithChecked }))
+          })
+          .catch((err) => console.log(err))
+      }
+
+      getGenres()
+    } else {
+      // Editing an existing movie
+    }
+  }, [jwtToken, navigate, id])
 
   const hasError = (key) => {
     return errors.indexOf(key) !== -1
@@ -59,6 +94,35 @@ const EditMovie = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+  }
+
+  const handleCheck = (e, position) => {
+    const value = parseInt(e.target.value, 10)
+
+    setMovie((currentMovie) => {
+      const isChecking = !currentMovie.genres[position].checked
+
+      const newGenres = currentMovie.genres.map((genre, index) => {
+        if (index !== position) return genre
+        return { ...genre, checked: isChecking }
+      })
+
+      let newGenresArray = [...currentMovie.genres_array]
+
+      if (isChecking) {
+        if (!newGenresArray.includes(value)) {
+          newGenresArray.push(value)
+        }
+      } else {
+        newGenresArray = newGenresArray.filter((id) => id !== value)
+      }
+
+      return {
+        ...currentMovie,
+        genres: newGenres,
+        genres_array: newGenresArray,
+      }
+    })
   }
 
   return (
@@ -103,7 +167,7 @@ const EditMovie = () => {
         <Select
           title={'MPAA Rating'}
           name={'mpaa_rating'}
-          value={movie.runtime}
+          value={movie.mpaa_rating}
           onChange={handleChange}
           placeHolder={'Choose rating'}
           options={mpaaOptions}
@@ -122,6 +186,25 @@ const EditMovie = () => {
           errorDiv={hasError('description') ? 'text-danger' : 'd-none'}
           errorMsg={'Please enter a description'}
         />
+
+        <h3>Genres</h3>
+
+        {movie.genres && movie.genres.length > 1 && (
+          <>
+            {Array.from(movie.genres).map((genre, index) => (
+              <Checkbox
+                title={genre.genre_name}
+                name={'genre'}
+                // key={index}
+                key={genre.id}
+                id={'genre-' + genre.id}
+                value={genre.id}
+                onChange={(e) => handleCheck(e, index)}
+                checked={genre.checked || false}
+              />
+            ))}
+          </>
+        )}
       </form>
     </div>
   )
