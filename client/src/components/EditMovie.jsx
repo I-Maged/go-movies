@@ -4,6 +4,7 @@ import Input from './form/Input'
 import Select from './form/Select'
 import TextArea from './form/TextArea'
 import Checkbox from './form/Checkbox'
+import Swal from 'sweetalert2'
 
 const mpaaOptions = [
   { id: 'G', value: 'G' },
@@ -33,7 +34,6 @@ const EditMovie = () => {
     description: '',
     genres: [],
     genres_array: [],
-    // genres_array: [Array(9).fill(false)],
   })
 
   useEffect(() => {
@@ -54,7 +54,6 @@ const EditMovie = () => {
           description: '',
           genres: [],
           genres_array: [],
-          // genres_array: [Array(9).fill(false)],
         })
 
         const headers = new Headers()
@@ -70,7 +69,6 @@ const EditMovie = () => {
               checked: false,
             }))
 
-            // Use the functional setter here to avoid stale closures
             setMovie((prev) => ({ ...prev, genres: genresWithChecked }))
           })
           .catch((err) => console.log(err))
@@ -90,10 +88,6 @@ const EditMovie = () => {
     let value = e.target.value
     let name = e.target.name
     setMovie({ ...movie, [name]: value })
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
   }
 
   const handleCheck = (e, position) => {
@@ -125,8 +119,44 @@ const EditMovie = () => {
     })
   }
 
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    let errors = []
+    let required = [
+      { field: movie.title, name: 'title' },
+      { field: movie.release_date, name: 'release_date' },
+      { field: movie.runtime, name: 'runtime' },
+      { field: movie.mpaa_rating, name: 'mpaa_rating' },
+      { field: movie.description, name: 'description' },
+    ]
+
+    required.forEach((obj) => {
+      if (obj.field === '') {
+        errors.push(obj.name)
+      }
+    })
+
+    if (movie.genres_array.length === 0) {
+      Swal.fire({
+        title: 'Error!',
+        text: 'You must choose at least one genre',
+        icon: 'error',
+        confirmButtonText: 'OK!',
+      })
+      // alert('You must choose at least one genre')
+      errors.push('genres')
+    }
+
+    setErrors(errors)
+
+    if (errors.length > 0) {
+      return false
+    }
+  }
+
   return (
-    <div>
+    <div className='mb-5'>
       <h2>Add/Edit Movie</h2>
       <hr />
 
@@ -205,6 +235,8 @@ const EditMovie = () => {
             ))}
           </>
         )}
+        <hr />
+        <button className='btn btn-primary'>Submit</button>
       </form>
     </div>
   )
