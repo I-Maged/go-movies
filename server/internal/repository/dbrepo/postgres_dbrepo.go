@@ -335,8 +335,8 @@ func (m *PostgresDBRepo) InsertMovie(movie models.Movie) (int, error) {
 	defer cancel()
 
 	stmt := `insert into movies
-			title, description, release_date, runtime, mpaa_rating,
-			created_at, updated_at, image
+			(title, description, release_date, runtime, mpaa_rating,
+			created_at, updated_at, image)
 			values ($1, $2, $3, $4, $5, $6, $7, $8)
 			returning id
 			`
@@ -364,7 +364,7 @@ func (m *PostgresDBRepo) UpdateMovieGenres(id int, genreIDs []int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	stmt := `delete from movies_genres where movie_id = &1`
+	stmt := `delete from movies_genres where movie_id = $1`
 
 	_, err := m.DB.ExecContext(ctx, stmt, id)
 	if err != nil {

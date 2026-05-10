@@ -152,6 +152,58 @@ const EditMovie = () => {
     if (errors.length > 0) {
       return false
     }
+
+    const headers = new Headers()
+    headers.append('Content-Type', 'application/json')
+    headers.append('Authorization', 'Bearer ' + jwtToken)
+
+    let method = 'Put'
+    if (id > 0) {
+      method = 'PATCH'
+    }
+    // console.log(movie)
+    // setMovie((movie) => ({
+    //   ...movie,
+    //   id: 99,
+    //   // release_date: new Date(movie.release_date),
+    //   release_date: new Date(movie.release_date).toISOString(),
+    //   runtime: parseInt(movie.runtime, 10),
+    // }))
+    // console.log(movie)
+
+    // const requestBody = movie
+    const requestBody = {
+      ...movie,
+      id: parseInt(movie.id, 10),
+      // release_date: new Date(movie.release_date),
+      release_date: new Date(movie.release_date).toISOString(),
+      runtime: parseInt(movie.runtime, 10),
+    }
+
+    console.log(requestBody)
+
+    // requestBody.release_date = new Date(movie.release_date).toISOString()
+    // requestBody.runtime = parseInt(movie.runtime, 10)
+
+    const requestOptions = {
+      body: JSON.stringify(requestBody),
+      method: method,
+      headers: headers,
+      credentials: 'include',
+    }
+
+    fetch(`/api/admin/movies/${movie.id}`, requestOptions)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          console.log(data.error)
+        } else {
+          navigate('/manage-catalouge')
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
   return (
@@ -159,7 +211,7 @@ const EditMovie = () => {
       <h2>Add/Edit Movie</h2>
       <hr />
 
-      <pre>{JSON.stringify(movie, null, 3)}</pre>
+      {/* <pre>{JSON.stringify(movie, null, 3)}</pre> */}
 
       <form onSubmit={handleSubmit}>
         <input type='hidden' name='id' value={movie.id} id='id' />
