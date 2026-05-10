@@ -230,6 +230,38 @@ const EditMovie = () => {
       })
   }
 
+  const deleteMovie = () => {
+    const headers = new Headers()
+    headers.append('Authorization', 'Bearer ' + jwtToken)
+
+    const requestOptions = { method: 'DELETE', headers: headers }
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(`/api/admin/movies/${movie.id}`, requestOptions)
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.error) {
+              console.log(data.error)
+            } else {
+              navigate('/manage-catalouge')
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      }
+    })
+  }
+
   return (
     <div className='mb-5'>
       <h2>Add/Edit Movie</h2>
@@ -312,6 +344,11 @@ const EditMovie = () => {
         )}
         <hr />
         <button className='btn btn-primary'>Submit</button>
+        {movie.id > 0 && (
+          <a href='#!' className='btn btn-danger ms-2' onClick={deleteMovie}>
+            Delete
+          </a>
+        )}
       </form>
     </div>
   )
