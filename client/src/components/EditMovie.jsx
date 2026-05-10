@@ -23,7 +23,7 @@ const EditMovie = () => {
     id = 0
   }
 
-  // const[error,setError]=useState(null)
+  const [error, setError] = useState(null)
   const [errors, setErrors] = useState([])
   const [movie, setMovie] = useState({
     id: 0,
@@ -77,6 +77,44 @@ const EditMovie = () => {
       getGenres()
     } else {
       // Editing an existing movie
+      const headers = new Headers()
+      headers.append('Content-Type', 'application/json')
+      headers.append('Authorization', 'Bearer ' + jwtToken)
+
+      const requestOptions = { method: 'GET', headers: headers }
+
+      fetch(`/api/admin/movies/${id}`, requestOptions)
+        .then((res) => {
+          if (res.status !== 200) {
+            setError('Invalid response code: ', res.status)
+          }
+
+          return res.json()
+        })
+        .then((data) => {
+          // fix date
+          data.movie.release_date = new Date(data.movie.release_date)
+            .toISOString()
+            .split('T')[0]
+
+          const checks = []
+          data.genres.forEach((g) => {
+            if (data.movie.genres_array.indexOf(g.id) !== -1) {
+              checks.push({ id: g.id, checked: true, genre_name: g.genre_name })
+            } else {
+              checks.push({
+                id: g.id,
+                checked: false,
+                genre_name: g.genre_name,
+              })
+            }
+          })
+
+          setMovie({ ...data.movie, genres: checks })
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     }
   }, [jwtToken, navigate, id])
 
@@ -161,29 +199,13 @@ const EditMovie = () => {
     if (id > 0) {
       method = 'PATCH'
     }
-    // console.log(movie)
-    // setMovie((movie) => ({
-    //   ...movie,
-    //   id: 99,
-    //   // release_date: new Date(movie.release_date),
-    //   release_date: new Date(movie.release_date).toISOString(),
-    //   runtime: parseInt(movie.runtime, 10),
-    // }))
-    // console.log(movie)
 
-    // const requestBody = movie
     const requestBody = {
       ...movie,
       id: parseInt(movie.id, 10),
-      // release_date: new Date(movie.release_date),
       release_date: new Date(movie.release_date).toISOString(),
       runtime: parseInt(movie.runtime, 10),
     }
-
-    console.log(requestBody)
-
-    // requestBody.release_date = new Date(movie.release_date).toISOString()
-    // requestBody.runtime = parseInt(movie.runtime, 10)
 
     const requestOptions = {
       body: JSON.stringify(requestBody),

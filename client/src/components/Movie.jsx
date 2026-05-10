@@ -15,7 +15,6 @@ const Movie = () => {
       fetch(`/api/movies/${id}`, requestOptions)
         .then((response) => response.json())
         .then((data) => {
-          console.log(data)
           if (data.genres) {
             data.genres = Object.values(data.genres)
           } else {

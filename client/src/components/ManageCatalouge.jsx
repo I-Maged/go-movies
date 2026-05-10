@@ -45,7 +45,7 @@ const ManageCatalouge = () => {
           {movies.map((movie) => (
             <tr key={movie.id}>
               <th>
-                <Link to={`/api/admin/movies/${movie.id}`}>{movie.title}</Link>
+                <Link to={`/admin/movie/${movie.id}`}>{movie.title}</Link>
               </th>
               <th>{movie.release_date}</th>
               <th>{movie.mpaa_rating}</th>
