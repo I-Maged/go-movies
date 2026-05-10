@@ -23,7 +23,7 @@ const EditMovie = () => {
     id = 0
   }
 
-  const [error, setError] = useState(null)
+  const [_, setError] = useState(null)
   const [errors, setErrors] = useState([])
   const [movie, setMovie] = useState({
     id: 0,
@@ -92,6 +92,8 @@ const EditMovie = () => {
           return res.json()
         })
         .then((data) => {
+          console.log(data)
+
           // fix date
           data.movie.release_date = new Date(data.movie.release_date)
             .toISOString()
