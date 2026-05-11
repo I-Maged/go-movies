@@ -20,7 +20,6 @@ const Movie = () => {
           } else {
             data.genres = []
           }
-          console.log(data)
           setMovie(data)
         })
         .catch((err) => console.log(err))

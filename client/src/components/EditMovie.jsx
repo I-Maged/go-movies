@@ -92,8 +92,6 @@ const EditMovie = () => {
           return res.json()
         })
         .then((data) => {
-          console.log(data)
-
           // fix date
           data.movie.release_date = new Date(data.movie.release_date)
             .toISOString()
