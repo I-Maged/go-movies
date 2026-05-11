@@ -32,7 +32,7 @@ const Genres = () => {
             <Link
               key={genre.id}
               className='list-group-item list-group-item-action'
-              to={`/api/genres/${genre.id}`}
+              to={`/genres/${genre.id}`}
               state={{ genreName: genre.genre_name }}
             >
               {genre.genre_name}
