@@ -6,12 +6,45 @@ const Graphql = () => {
   const [movies, setMovies] = useState([])
   const [fullList, setFullList] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
-  // const searchTermRef = useRef()
+
+  const performSearch = () => {
+    const payload = `
+    {
+      search(titleContains: "${searchTerm}") {
+        id
+        title
+        runtime
+        release_date
+        mpaa_rating
+      }
+    }`
+
+    const headers = new Headers()
+    headers.append('Content-Type', 'application/graphql')
+
+    const requestOptions = { method: 'POST', headers: headers, body: payload }
+
+    fetch(`/api/graph`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        let theList = Object.values(data.data.search)
+        setMovies(theList)
+      })
+      .catch((err) => console.log(err))
+  }
 
   const handleChange = (e) => {
     e.preventDefault()
+
+    let value = e.target.value
+    setSearchTerm(value)
+
+    if (value.length > 2) {
+      performSearch()
+    } else {
+      setMovies(fullList)
+    }
   }
-  const performSearch = () => {}
 
   useEffect(() => {
     const payload = `
@@ -51,7 +84,6 @@ const Graphql = () => {
           className='form-control'
           id='searchTerm'
           name='searchTerm'
-          // ref={searchTermRef}
           placeholder='Search Term'
           onChange={handleChange}
           autoComplete='search-term-new'
